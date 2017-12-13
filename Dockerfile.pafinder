@@ -1,0 +1,14 @@
+FROM paf-dependencies
+
+RUN updatedb
+
+WORKDIR /pafinder
+
+RUN git clone https://github.com/mmalenta/PAFINDER.git --branch dada_dump --single-branch ./
+
+RUN mkdir obj && \
+    mkdir bin && \
+    make
+
+ENV PATH ${PATH}:/pafinder/bin
+
