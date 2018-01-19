@@ -1,4 +1,17 @@
-FROM paf-dependencies
+FROM paf-depend
+
+WORKDIR /
+
+RUN wget https://repo.continuum.io/archive/Anaconda2-5.0.1-Linux-x86_64.sh -O conda.sh && \ 
+    wget https://sourceforge.net/projects/gnuplot-py/files/Gnuplot-py/1.8/gnuplot-py-1.8.tar.gz && \
+    tar -xvf gnuplot-py-1.8.tar.gz && \
+    bash ./conda.sh -b -p /anaconda2 && rm conda.sh && rm gnuplot-py-1.8.tar.gz
+
+WORKDIR gnuplot-py-1.8
+
+RUN /anaconda2/bin/python2.7 setup.py install
+
+ENV PATH ${PATH}:/anaconda2/bin 
 
 WORKDIR /
 

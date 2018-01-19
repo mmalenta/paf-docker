@@ -1,10 +1,12 @@
-FROM paf-dependencies
+FROM paf-depend
 
 WORKDIR /pafinder
 #RUN git clone https://github.com/mmalenta/PAFINDER.git --branch gpu_send --single-branch ./
 #RUN git clone https://github.com/astrooman/paf.git --branch cleanup --single-branch ./
 #RUN git clone https://github.com/astrooman/paf.git --branch test --single-branch ./
-RUN git clone https://github.com/astrooman/paf.git --branch scale --single-branch ./
+#RUN git clone https://github.com/mmalenta/PAFINDER.git --branch scale --single-branch ./
+RUN git clone https://github.com/mmalenta/PAFINDER.git --branch scale_exp --single-branch ./
+#RUN git clone https://github.com/astrooman/paf.git --branch save_info --single-branch ./
 #RUN git clone https://github.com/astrooman/paf.git --branch effelsberg_working --single-branch ./
 
 RUN mkdir obj && \
@@ -18,14 +20,8 @@ RUN mkdir obj && \
     echo "CC=g++" >> Makefile.inc && \
     echo "NVCC=$(which nvcc)" >> Makefile.inc && \
     make && \
-    echo "IPS 10.17.8.1" >> config.conf && \
-    echo "GPUIDS 0" >> config.conf && \
-    echo "RA 0.0" >> config.conf && \
-    echo "DEC 0.0" >> config.conf && \
-    echo "BEAM 0" >> config.conf && \
-    g++ ./tools/net_test.cpp -o ./tools/net_test -std=c++11 -lpthread  && \ 
     echo "set nocompatible" >> ~/.vimrc && \
     echo "set backspace=2" >> ~/.vimrc
 
-ENV PATH ${PATH}:/paf/bin
+ENV PATH ${PATH}:/pafinder/bin
 WORKDIR /

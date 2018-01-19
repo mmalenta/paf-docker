@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for node in {2..2} 
+for node in {0..1} {3..8} 
 do
 
     echo "Starting job on node ${node}..."

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+
+node=$( hostname | sed 's/pacifix\([0-9]*\)/\1/' )
+
+cd /beegfs/PAFJAN/pacifix${node}; \
+#cd /beegfsPACIFIX/pacifix${node}/JAN_TEST/; \
+
+# This is where the output data will go. OBSID is set by the calling script
+outdir=/beegfs/PAFJAN/output/${OBSID}
+mkdir -p $outdir
+/home/pulsar/mkeith/redigitise_data.sh /dev/shm $outdir 33 > $outdir/pacifix${node}_redig.log 2>&1 &
+
+rm config.conf; \
+touch config.conf; \
+echo "IPS 10.17.${node}.1,10.17.${node}.2" >> config.conf; \
+echo 'GPUIDS 0,1' >> config.conf; \
+echo 'NOBEAMS 1' >> config.conf; \
+echo 'NOGPUS 1' >> config.conf; \
+echo 'NACCUMULATE 256' >> config.conf; \
+echo 'NOSTREAMS 1' >> config.conf; \
+echo 'OUTBITS 32' >> config.conf; \
+nvidia-docker pull docker.mpifr-bonn.mpg.de:5000/paf-test:latest; \
+nvidia-docker tag docker.mpifr-bonn.mpg.de:5000/paf-test:latest paf-test:latest; \
+nvidia-docker run -u 50000:50000 -d --rm --net=host -v /dev/shm/:/output/ -v /beegfs/PAFJAN/pacifix${node}/:/beegfs/ --ulimit memlock=-1 paf-test /bin/bash -c 'numactl --membind 0 --cpunodebind 0 /pafinder/bin/pafinder --config /beegfs/config.conf -o /output/ -r 300 -v --numa 0 &> /beegfs/run_00.log; chmod +777 /beegfs/run_00.log'
+
+nvidia-docker run -u 50000:50000 -d --rm --net=host -v /dev/shm/:/output/ -v /beegfs/PAFJAN/pacifix${node}/:/beegfs/ --ulimit memlock=-1 paf-test /bin/bash -c 'numactl --membind 1 --cpunodebind 1 /pafinder/bin/pafinder --config /beegfs/config.conf -o /output/ -r 300 -v --numa 1 &> /beegfs/run_01.log; chmod +777 /beegfs/run_01.log'
+
