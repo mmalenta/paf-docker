@@ -2,7 +2,6 @@
 
 for node in {0..1} {3..8} 
 do
-
     echo "Starting job on node ${node}..."
     ssh pacifix${node} 'bash -s' < run_this.sh
 done

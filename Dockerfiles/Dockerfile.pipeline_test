@@ -5,9 +5,15 @@ WORKDIR /pafinder
 #RUN git clone https://github.com/astrooman/paf.git --branch cleanup --single-branch ./
 #RUN git clone https://github.com/astrooman/paf.git --branch test --single-branch ./
 #RUN git clone https://github.com/mmalenta/PAFINDER.git --branch scale --single-branch ./
-RUN git clone https://github.com/mmalenta/PAFINDER.git --branch scale_exp --single-branch ./
+#RUN git clone https://github.com/mmalenta/PAFINDER.git --branch scale_exp --single-branch ./
+RUN git clone https://github.com/mmalenta/PAFINDER.git --branch dada_dump --single-branch ./
+#RUN git clone https://github.com/mmalenta/PAFINDER.git --branch metadata --single-branch ./
+#RUN git clone https://github.com/mmalenta/PAFINDER.git --branch start_time --single-branch ./
 #RUN git clone https://github.com/astrooman/paf.git --branch save_info --single-branch ./
 #RUN git clone https://github.com/astrooman/paf.git --branch effelsberg_working --single-branch ./
+
+RUN numpydir=$( python2.7 -c "import numpy; print numpy.get_include()") && echo "NumPy include directory: $numpydir" &&  sed -i "1i NPY_INC = $numpydir" Makefile
+#RUN cat Makefile
 
 RUN mkdir obj && \
     mkdir bin && \
@@ -24,4 +30,4 @@ RUN mkdir obj && \
     echo "set backspace=2" >> ~/.vimrc
 
 ENV PATH ${PATH}:/pafinder/bin
-WORKDIR /
+WORKDIR /pafinder

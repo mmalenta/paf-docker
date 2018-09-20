@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for node in {0..8}
+for node in $(echo 6)
+#for node in {0..8}
 do
 
     echo "Killing paf docker on pacifix${node}..."

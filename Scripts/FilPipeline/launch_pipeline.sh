@@ -11,17 +11,17 @@ echo "OBSID=$obsid TOBS=$tobs"
 
 rm pafinder.launch.*.log
 # Nodes 0,1,3-8 have two beams. Node 2 currently has a bad NIC and can only take 1 beam.
-for node in {0..1} {3..8} 
-#for node in 1
+for node in {0..8} 
+#for node in 0
 do
     echo "Starting job on node ${node}..."
     ssh pacifix${node} "/usr/bin/env OBSID=$obsid TOBS=$tobs HALVES='0 1' bash -s" < run_this.sh > pafinder.launch.${node}.log &
 done
 
 # Make node 2 a special case MJK 2018-01-19
-node=2
-echo "Starting job on node ${node}..."
-ssh pacifix${node} "/usr/bin/env OBSID=$obsid TOBS=$tobs HALVES='1' bash -s" < run_this.sh > pafinder.launch.${node}.log &
+#node=2
+#echo "Starting job on node ${node}..."
+#ssh pacifix${node} "/usr/bin/env OBSID=$obsid TOBS=$tobs HALVES='1' bash -s" < run_this.sh > pafinder.launch.${node}.log &
 
 wait
 tail pafinder.launch.*.log

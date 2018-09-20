@@ -1,11 +1,9 @@
 #!/bin/bash
 
-
-
 node=$( hostname | sed 's/pacifix\([0-9]*\)/\1/' )
 
 # This is where the output data will go. OBSID is set by the calling script
-outdir=/beegfs/PAFJAN/output/${OBSID}
+outdir=/beegfs/PAFAUG/output/${OBSID}
 
 # we also get TOBS
 configfile=$outdir/config.${node}.conf
@@ -29,12 +27,12 @@ echo 'NOGPUS 1' >> $configfile; \
 echo 'NACCUMULATE 256' >> $configfile; \
 echo 'NOSTREAMS 1' >> $configfile; \
 echo 'OUTBITS 32' >> $configfile; \
-nvidia-docker pull docker.mpifr-bonn.mpg.de:5000/paf-test:latest; \
-nvidia-docker tag docker.mpifr-bonn.mpg.de:5000/paf-test:latest paf-test:latest; \
+nvidia-docker pull docker.mpifr-bonn.mpg.de:5000/paf-pipeline:latest; \
+nvidia-docker tag docker.mpifr-bonn.mpg.de:5000/paf-pipeline:latest paf-pipeline:latest; \
 
 
 for half in $HALVES ; do
-   nvidia-docker run -u 50000:50000 -d --rm --net=host --name paf-pipeline-${half} -v $cachedir:/output/ -v ${outdir}:/beegfs/ --ulimit memlock=-1 paf-test /usr/bin/env node=$node half=$half TOBS=$TOBS /bin/bash -c 'numactl --membind $half --cpunodebind $half /pafinder/bin/pafinder --config /beegfs/config.${node}.conf -o /output/ -r $TOBS -v --numa $half &> /beegfs/pafinder_${node}_${half}.log'
+   docker run --runtime=nvidia --privileged -u 50000:50000 -d --rm --net=host --name paf-pipeline-${half} -v $cachedir:/output/ -v ${outdir}:/beegfs/ --ulimit memlock=-1 paf-pipeline /usr/bin/env node=$node half=$half TOBS=$TOBS /bin/bash -c 'numactl --membind $half --cpunodebind $half /pafinder/bin/pafinder --config /beegfs/config.${node}.conf -o /output/ -r $TOBS -v --numa $half &> /beegfs/pafinder_${node}_${half}.log'
 done
 
 

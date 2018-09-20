@@ -1,0 +1,26 @@
+FROM paf-depend
+
+WORKDIR /pafinder
+#RUN git clone https://github.com/mmalenta/PAFINDER.git --branch gpu_send --single-branch ./
+#RUN git clone https://github.com/astrooman/paf.git --branch cleanup --single-branch ./
+#RUN git clone https://github.com/astrooman/paf.git --branch test --single-branch ./
+#RUN git clone https://github.com/mmalenta/PAFINDER.git --branch scale --single-branch ./
+RUN git clone https://github.com/astrooman/paf.git --branch save_info --single-branch ./
+#RUN git clone https://github.com/astrooman/paf.git --branch effelsberg_working --single-branch ./
+
+RUN mkdir obj && \
+    mkdir bin && \
+    touch Makefile.inc && \
+    echo "SRC_DIR=./src" >> Makefile.inc && \
+    echo "INC_DIR=./include" >> Makefile.inc && \
+    echo "OBJ_DIR=./obj" >> Makefile.inc && \
+    echo "BIN_DIR=./bin" >> Makefile.inc && \
+    echo "DEDISP_DIR=./dedisp_paf" >> Makefile.inc && \
+    echo "CC=g++" >> Makefile.inc && \
+    echo "NVCC=$(which nvcc)" >> Makefile.inc && \
+    make && \
+    echo "set nocompatible" >> ~/.vimrc && \
+    echo "set backspace=2" >> ~/.vimrc
+
+ENV PATH ${PATH}:/pafinder/bin
+WORKDIR /
